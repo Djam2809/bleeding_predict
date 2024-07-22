@@ -49,7 +49,7 @@ def main():
 
     # Ajouter une photo réduite à gauche
     image = Image.open('images/kidney.jpg')  # Assurez-vous que le chemin est correct
-    st.image(image, use_column_width=True, caption='Image du rein')
+    st.image(image, use_column_width=True, caption='Save your kidney (by DE)')
 
     # Créer une div pour le contenu principal avec une marge à gauche
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
@@ -118,7 +118,7 @@ def main():
     ))
 
     fig.update_layout(
-        paper_bgcolor="lavender",
+        paper_bgcolor="white",
         font={'color': "darkblue", 'family': "Arial"}
     )
 
