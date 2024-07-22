@@ -55,7 +55,7 @@ def main():
     st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
     # Ajouter une photo réduite à gauche
-    st.markdown('<div class="image-container"><img src="C:/Users/4074034/Desktop/kidney.jpg" alt="Kidney Image"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="image-container"><img src="images/kidney.jpg" alt="Kidney Image"></div>', unsafe_allow_html=True)
 
     # Formulaire pour entrer les données du patient avec des boutons radio
     sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
