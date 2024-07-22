@@ -96,27 +96,28 @@ def main():
 
     st.write(f"Classe prédite avec un cutoff de {cutoff} : {pred_class}")
 
+    # Afficher un tachymètre avec Plotly
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=probability,
         gauge={
-            'axis': {'range': [0, 1]},
+            'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
             'bgcolor': "white",
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 0.5], 'color': 'lightgray'},
-                {'range': [0.5, 0.7], 'color': 'gray'},
-                {'range': [0.7, 1], 'color': 'darkgray'}
+                {'range': [0, 0.1666], 'color': 'green'},
+                {'range': [0.1666, 0.3333], 'color': 'lightgreen'},
+                {'range': [0.3333, 0.5], 'color': 'orange'},
+                {'range': [0.5, 1], 'color': 'red'}
             ],
             'threshold': {
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.75,
                 'value': cutoff
             }
-        },
-        domain={'x': [0, 1], 'y': [0, 1]}
+        }
     ))
 
     fig.update_layout(
@@ -128,4 +129,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
