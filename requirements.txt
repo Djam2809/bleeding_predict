@@ -3,8 +3,8 @@ pandas==1.5.0
 numpy==1.22.0
 joblib==1.1.0
 plotly==5.3.1
-pillow==8.3.2
-matplotlib
-mysqlclient==2.2.4
+pillow==9.0.0  # Update this to a version compatible with Python 3.11
+matplotlib==3.9.1
 scikit-learn
+PyMySQL
 
