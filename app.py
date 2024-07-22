@@ -55,7 +55,7 @@ def main():
     st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
     # Ajouter une photo réduite à gauche
-    st.markdown('<div class="image-container"><img src="C:/Users/4074034/Desktop/kidney.jpg"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="image-container"><img src="C:/Users/4074034/Desktop/kidney.jpg" alt="Kidney Image"></div>', unsafe_allow_html=True)
 
     # Formulaire pour entrer les données du patient avec des boutons radio
     sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
@@ -66,7 +66,7 @@ def main():
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
     anticoag = 1 if anticoag == "Oui" else 0
-    donneur = 1 if donneur == "Vivant" else 0
+    donneur = 1 si donneur == "Vivant" else 0
 
     # Créer un DataFrame pour les nouvelles données du patient
     new_patient_data = {
@@ -92,37 +92,39 @@ def main():
     # Utiliser le cutoff de 0.55 pour la prédiction
     cutoff = 0.55
     new_patient_pred = (new_patient_pred_proba >= cutoff).astype(int)
-    pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
+    pred_class = "Risque" si new_patient_pred[0] == 1 else "Pas de risque"
 
     st.write(f"Classe prédite avec un cutoff de {cutoff} : {pred_class}")
 
-    # Afficher un tachymètre avec Plotly
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=probability,
         gauge={
-            'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'axis': {'range': [0, 1]},
             'bar': {'color': "darkblue"},
             'bgcolor': "white",
             'borderwidth': 2,
-            'bordercolor': "gray"},
-        steps=[
-            {'range': [0, 0.1666], 'color': 'green'},
-            {'range': [0.1666, 0.3333], 'color': 'lightgreen'},
-            {'range': [0.3333, 0.5], 'color': 'orange'},
-            {'range': [0.5, 1], 'color': 'red'}
-        ],
-        threshold={
-            'line': {'color': "black", 'width': 4},
-            'thickness': 0.75,
-            'value': cutoff
-        }
+            'bordercolor': "gray",
+            'steps': [
+                {'range': [0, 0.5], 'color': 'lightgray'},
+                {'range': [0.5, 0.7], 'color': 'gray'},
+                {'range': [0.7, 1], 'color': 'darkgray'}
+            ],
+            'threshold': {
+                'line': {'color': "red", 'width': 4},
+                'thickness': 0.75,
+                'value': cutoff
+            }
+        },
+        domain={'x': [0, 1], 'y': [0, 1]}
     ))
 
-    fig.update_layout(paper_bgcolor="lavender", font={'color': "darkblue", 'family': "Arial"})
+    fig.update_layout(
+        paper_bgcolor="lavender",
+        font={'color': "darkblue", 'family': "Arial"}
+    )
 
     st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
-
