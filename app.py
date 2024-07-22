@@ -66,7 +66,7 @@ def main():
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
     anticoag = 1 if anticoag == "Oui" else 0
-    donneur = 1 si donneur == "Vivant" else 0
+    donneur = 1 if donneur == "Vivant" else 0
 
     # Créer un DataFrame pour les nouvelles données du patient
     new_patient_data = {
@@ -92,7 +92,7 @@ def main():
     # Utiliser le cutoff de 0.55 pour la prédiction
     cutoff = 0.55
     new_patient_pred = (new_patient_pred_proba >= cutoff).astype(int)
-    pred_class = "Risque" si new_patient_pred[0] == 1 else "Pas de risque"
+    pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
 
     st.write(f"Classe prédite avec un cutoff de {cutoff} : {pred_class}")
 
@@ -128,3 +128,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
