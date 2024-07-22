@@ -36,16 +36,6 @@ def main():
             font-size: 20px;
             font-weight: bold;
         }
-        .image-container {
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
-            padding: 10px;
-        }
-        .image-container img {
-            width: 150px;  /* Ajuster la taille de l'image */
-            height: auto;
-        }
         .content-container {
             margin-left: 170px; /* Ajustez cette valeur pour laisser de l'espace pour l'image */
         }
@@ -58,7 +48,8 @@ def main():
     st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
     # Ajouter une photo réduite à gauche
-    st.markdown('<div class="image-container"><img src="images/kidney.jpg" alt="Kidney Image"></div>', unsafe_allow_html=True)
+    image = Image.open('images/kidney.jpg')  # Assurez-vous que le chemin est correct
+    st.image(image, use_column_width=True, caption='Image du rein')
 
     # Créer une div pour le contenu principal avec une marge à gauche
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
@@ -67,7 +58,7 @@ def main():
     sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
     anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
     donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
-    age = st.number_input("Âge", min_value=0, max_value=100, value=30, step=1)
+    age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
 
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
