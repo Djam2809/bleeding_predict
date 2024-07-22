@@ -38,13 +38,16 @@ def main():
         }
         .image-container {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: flex-start;
             padding: 10px;
         }
         .image-container img {
             width: 150px;  /* Ajuster la taille de l'image */
             height: auto;
+        }
+        .content-container {
+            margin-left: 170px; /* Ajustez cette valeur pour laisser de l'espace pour l'image */
         }
         </style>
         """,
@@ -57,6 +60,9 @@ def main():
     # Ajouter une photo réduite à gauche
     st.markdown('<div class="image-container"><img src="images/kidney.jpg" alt="Kidney Image"></div>', unsafe_allow_html=True)
 
+    # Créer une div pour le contenu principal avec une marge à gauche
+    st.markdown('<div class="content-container">', unsafe_allow_html=True)
+    
     # Formulaire pour entrer les données du patient avec des boutons radio
     sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
     anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
@@ -126,8 +132,9 @@ def main():
     )
 
     st.plotly_chart(fig)
+    
+    # Fermer la div contenant le contenu principal
+    st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
-
-
