@@ -113,8 +113,8 @@ def main():
             'steps': [
                 {'range': [0, 0.1666], 'color': 'green'},
                 {'range': [0.1666, 0.3333], 'color': 'lightgreen'},
-                {'range': [0.3333, 0.5], 'color': 'orange'},
-                {'range': [0.5, 1], 'color': 'red'}
+                {'range': [0.3333, 0.55], 'color': 'orange'},
+                {'range': [0.55, 1], 'color': 'red'}
             ],
             'threshold': {
                 'line': {'color': "red", 'width': 4},
