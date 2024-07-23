@@ -4,6 +4,7 @@ import numpy as np
 import joblib
 import plotly.graph_objects as go
 from PIL import Image
+import os
 
 def main():
     # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
@@ -47,9 +48,16 @@ def main():
     # Titre de l'application
     st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
-    # Ajouter une photo réduite à gauche
-    image = Image.open('images/kidney.jpg')  # Assurez-vous que le chemin est correct
-    st.image(image, use_column_width=True, caption='Save your kidney (by DE)')
+    # Vérifier les fichiers dans le répertoire images
+    st.write("Fichiers dans le répertoire images :", os.listdir('images'))
+
+    # Ajouter une photo GIF réduite à gauche
+    try:
+        image_path = 'images/kidney.gif'  # Chemin vers le fichier GIF
+        image = Image.open(image_path)
+        st.image(image, use_column_width=True, caption='Image du rein', format='GIF')
+    except FileNotFoundError:
+        st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
 
     # Créer une div pour le contenu principal avec une marge à gauche
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
@@ -58,7 +66,7 @@ def main():
     sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
     anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
     donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
-    age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
+    age = st.number_input("Âge", min_value=0, max_value=100, value=30, step=1)
 
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
@@ -100,7 +108,7 @@ def main():
         gauge={
             'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
-            'bgcolor': "white",
+            'bgcolor': "white",  # Arrière-plan du tachymètre
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
@@ -118,7 +126,7 @@ def main():
     ))
 
     fig.update_layout(
-        paper_bgcolor="white",
+        paper_bgcolor="white",  # Fond du graphique
         font={'color': "darkblue", 'family': "Arial"}
     )
 
