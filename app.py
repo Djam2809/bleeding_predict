@@ -7,6 +7,7 @@ from PIL import Image
 import os
 from fpdf import FPDF
 import base64
+import io
 
 def create_pdf(sexe, anticoag, donneur, age, probability, pred_class, kidney_img, gauge_img):
     pdf = FPDF()
