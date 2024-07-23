@@ -17,95 +17,65 @@ def main():
         """
         <style>
         .main {
-            background-color: #F0F8FF;
-            padding: 20px;
+            background-color: #FFFFFF;
         }
         .stButton>button {
             color: white;
             background: #4CAF50;
-            border-radius: 10px;
-            padding: 10px 24px;
+            border-radius: 5px;
+            padding: 8px 16px;
             border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
         }
         .stButton>button:hover {
             background: #45a049;
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
         .stRadio>label, .stNumberInput>label {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            color: #2C3E50;
         }
-        .content-container {
-            margin-left: 170px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .variable-container {
-            background-color: #F8F9FA;
-            padding: 20px;
-            border-radius: 10px;
+        .title-container {
+            display: flex;
+            align-items: center;
             margin-bottom: 20px;
-            border: 1px solid #E9ECEF;
         }
-        .result-container {
-            background-color: #E9ECEF;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            border: 2px solid #4CAF50;
+        .title-container img {
+            width: 100px;
+            margin-right: 20px;
         }
-        h1 {
-            color: #2C3E50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        h3 {
-            color: #34495E;
-            margin-top: 20px;
+        .variables-container {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Titre de l'application
-    st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
-
-    # Ajouter une photo réduite à gauche
+    # Titre de l'application avec image
     try:
         image_path = 'images/kidney.jpg'
         image = Image.open(image_path)
-        st.image(image, use_column_width=True, caption='Save your Kidney (by DE-2024)')
+        col1, col2 = st.columns([1, 4])
+        with col1:
+            st.image(image, width=100)
+        with col2:
+            st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
     except FileNotFoundError:
         st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
+        st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
     except Exception as e:
         st.error(f"Erreur lors du chargement de l'image : {e}")
+        st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
-    # Créer une div pour le contenu principal avec une marge à gauche
-    st.markdown('<div class="content-container">', unsafe_allow_html=True)
-    
     # Formulaire pour entrer les données du patient avec des boutons radio
-    with st.container():
-        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
-        sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
-        anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
-        donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
-        age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="variables-container">', unsafe_allow_html=True)
+    sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
+    anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
+    donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
+    age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
@@ -129,7 +99,6 @@ def main():
     new_patient_pred_proba = clf_isotonic.predict_proba(new_patient_scaled)[:, 1]
 
     # Afficher le résultat de la prédiction
-    st.markdown('<div class="result-container">', unsafe_allow_html=True)
     st.subheader("Résultat de la prédiction")
     probability = new_patient_pred_proba[0]
     st.write(f"Probabilité de complications hémorragiques : {probability:.4f}")
@@ -140,7 +109,6 @@ def main():
     pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
 
     st.write(f"Classe prédite avec un cutoff de {cutoff} : {pred_class}")
-    st.markdown('</div>', unsafe_allow_html=True)
 
     # Afficher un tachymètre avec Plotly
     fig = go.Figure(go.Indicator(
@@ -167,9 +135,6 @@ def main():
     )
 
     st.plotly_chart(fig)
-    
-    # Fermer la div contenant le contenu principal
-    st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
