@@ -155,6 +155,12 @@ def main():
         font={'color': "darkblue", 'family': "Arial"}
     )
 
+    st.plotly_chart(fig)
+
+    # Save the gauge as an image
+    img_bytes = fig.to_image(format="png")
+    gauge_img = io.BytesIO(img_bytes)
+
     # Get the kidney image
     kidney_img = Image.open('images/kidney.jpg')
     kidney_img_bytes = io.BytesIO()
@@ -170,7 +176,6 @@ def main():
         mime="application/pdf"
     )
 
-    st.plotly_chart(fig)
     # Ajouter le disclaimer en bas de la page
     st.markdown("""
     <div style='font-size: 12px; color: gray; text-align: center; margin-top: 50px;'>
