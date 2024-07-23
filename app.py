@@ -51,15 +51,12 @@ def main():
     # Vérifier les fichiers dans le répertoire images
     st.write("Fichiers dans le répertoire images :", os.listdir('images'))
 
-    # Ajouter une photo GIF réduite à gauche
+    # Ajouter une photo réduite à gauche
     try:
-        image_path = 'images/kidney.gif'  # Chemin vers le fichier GIF
-        image = Image.open(image_path)
-        st.image(image, use_column_width=True, caption='Save your Kidney (DE)')
+        image = Image.open('images/kidney.jpg')
+        st.image(image, use_column_width=True, caption='Save your Kidney (by DE-2024)')
     except FileNotFoundError:
-        st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
-    except Exception as e:
-        st.error(f"Erreur lors du chargement de l'image : {e}")
+        st.error("Le fichier image 'kidney.jpg' est introuvable dans le répertoire 'images'.")
 
     # Créer une div pour le contenu principal avec une marge à gauche
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
