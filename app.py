@@ -5,6 +5,30 @@ import joblib
 import plotly.graph_objects as go
 from PIL import Image
 import os
+from fpdf import FPDF
+import base64
+
+def create_pdf(sexe, anticoag, donneur, age, probability, pred_class, kidney_img, gauge_img):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=16, style="B")
+    pdf.cell(200, 10, txt="Hemorrhage Risk Prediction Results", ln=1, align='C')
+    
+    # Add kidney image
+    pdf.image(kidney_img, x=10, y=30, w=50)
+    
+    # Add gauge image
+    pdf.image(gauge_img, x=70, y=30, w=130)
+    
+    pdf.set_font("Arial", size=12)
+    pdf.ln(60)  # Move down after images
+    pdf.cell(200, 10, txt=f"Sex: {'Male' if sexe == 1 else 'Female'}", ln=1)
+    pdf.cell(200, 10, txt=f"Anticoagulation: {'Yes' if anticoag == 1 else 'No'}", ln=1)
+    pdf.cell(200, 10, txt=f"Donor type: {'Living' if donneur == 1 else 'Deceased'}", ln=1)
+    pdf.cell(200, 10, txt=f"Age: {age}", ln=1)
+    pdf.cell(200, 10, txt=f"Probability of hemorrhagic complications: {probability:.4f}", ln=1)
+    pdf.cell(200, 10, txt=f"Predicted class: {pred_class}", ln=1)
+    return pdf.output(dest='S').encode('latin-1')
 
 def main():
     # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
@@ -128,6 +152,21 @@ def main():
     fig.update_layout(
         paper_bgcolor="white",
         font={'color': "darkblue", 'family': "Arial"}
+    )
+
+    # Get the kidney image
+    kidney_img = Image.open('images/kidney.jpg')
+    kidney_img_bytes = io.BytesIO()
+    kidney_img.save(kidney_img_bytes, format='PNG')
+    kidney_img_bytes = kidney_img_bytes.getvalue()
+
+    # Créer le PDF et ajouter un bouton de téléchargement
+    pdf = create_pdf(sexe, anticoag, donneur, age, probability, pred_class, kidney_img_bytes, gauge_img)
+    st.download_button(
+        label="Télécharger les résultats en PDF",
+        data=pdf,
+        file_name="hemorrhage_risk_prediction.pdf",
+        mime="application/pdf"
     )
 
     st.plotly_chart(fig)
