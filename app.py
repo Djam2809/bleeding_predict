@@ -131,6 +131,15 @@ def main():
     )
 
     st.plotly_chart(fig)
+    # Ajouter le disclaimer en bas de la page
+    st.markdown("""
+    <div style='font-size: 10px; color: gray; text-align: center; margin-top: 50px;'>
+    <hr>
+    Disclaimer: This ML algorithm was developed using data from 275 transplant patients. 
+    It was trained using a VotingClassifier including Logistic Regression, Linear Discriminant Analysis, and Bagging, 
+    fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
+    </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
