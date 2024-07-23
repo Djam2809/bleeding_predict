@@ -55,9 +55,11 @@ def main():
     try:
         image_path = 'images/kidney.gif'  # Chemin vers le fichier GIF
         image = Image.open(image_path)
-        st.image(image, use_column_width=True, caption='Image du rein', format='GIF')
+        st.image(image, use_column_width=True, caption='Save your Kidney (DE)')
     except FileNotFoundError:
         st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'image : {e}")
 
     # Créer une div pour le contenu principal avec une marge à gauche
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
