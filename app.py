@@ -39,7 +39,7 @@ def main():
             margin-bottom: 20px;
         }
         .title-container img {
-            width: 100px;
+            width: 200px;
             margin-right: 20px;
         }
         .variables-container {
@@ -57,9 +57,9 @@ def main():
     try:
         image_path = 'images/kidney.jpg'
         image = Image.open(image_path)
-        col1, col2 = st.columns([1, 4])
+        col1, col2 = st.columns([1, 3])
         with col1:
-            st.image(image, width=100)
+            st.image(image, width=200)
         with col2:
             st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
     except FileNotFoundError:
