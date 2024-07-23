@@ -48,15 +48,15 @@ def main():
     # Titre de l'application
     st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
-    # Vérifier les fichiers dans le répertoire images
-    st.write("Fichiers dans le répertoire images :", os.listdir('images'))
-
     # Ajouter une photo réduite à gauche
     try:
-        image = Image.open('images/kidney.jpg')
+        image_path = 'images/kidney.png'  # Assurez-vous que le chemin et l'extension sont corrects
+        image = Image.open(image_path)
         st.image(image, use_column_width=True, caption='Save your Kidney (by DE-2024)')
     except FileNotFoundError:
-        st.error("Le fichier image 'kidney.jpg' est introuvable dans le répertoire 'images'.")
+        st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'image : {e}")
 
     # Créer une div pour le contenu principal avec une marge à gauche
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
