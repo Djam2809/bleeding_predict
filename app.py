@@ -53,7 +53,7 @@ def main():
 
     # Ajouter une photo GIF réduite à gauche
     try:
-        image_path = 'images/kidney1.gif'  # Chemin vers le fichier GIF
+        image_path = 'images/kidney.gif'  # Chemin vers le fichier GIF
         image = Image.open(image_path)
         st.image(image, use_column_width=True, caption='Image du rein', format='GIF')
     except FileNotFoundError:
