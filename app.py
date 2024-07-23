@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import kaleido 
+import plotly.io as pio
 import joblib
 import plotly.graph_objects as go
 from PIL import Image
