@@ -39,19 +39,27 @@ def main():
             border-radius: 5px;
             margin-bottom: 20px;
         }
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Titre de l'application
-    st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
+    # Titre de l'application (centré)
+    st.markdown("<h1 style='text-align: center;'>Prédiction du risque d'hémorragie post-transplantation rénale</h1>", unsafe_allow_html=True)
 
-    # Ajouter l'image sous le titre
+    # Ajouter l'image sous le titre (centrée)
     try:
         image_path = 'images/kidney.jpg'
         image = Image.open(image_path)
-        st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            st.image(image, width=200, caption='Save your Kidney (by DE-2024)', use_column_width=True)
     except FileNotFoundError:
         st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
     except Exception as e:
