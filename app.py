@@ -50,7 +50,7 @@ def main():
 
     # Ajouter une photo réduite à gauche
     try:
-        image_path = 'images/kidney.png'  # Assurez-vous que le chemin et l'extension sont corrects
+        image_path = 'images/kidney.jpg'  # Assurez-vous que le chemin et l'extension sont corrects
         image = Image.open(image_path)
         st.image(image, use_column_width=True, caption='Save your Kidney (by DE-2024)')
     except FileNotFoundError:
