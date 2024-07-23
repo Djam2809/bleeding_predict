@@ -17,7 +17,8 @@ def main():
         """
         <style>
         .main {
-            background-color: #FFFFFF;
+            background-color: #F0F8FF;
+            padding: 20px;
         }
         .stButton>button {
             color: white;
@@ -25,20 +26,47 @@ def main():
             border-radius: 10px;
             padding: 10px 24px;
             border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
         .stButton>button:hover {
             background: #45a049;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
-        .stRadio>label {
-            font-size: 20px;
+        .stRadio>label, .stNumberInput>label {
+            font-size: 18px;
             font-weight: bold;
-        }
-        .stNumberInput>label {
-            font-size: 20px;
-            font-weight: bold;
+            color: #2C3E50;
         }
         .content-container {
-            margin-left: 170px; /* Ajustez cette valeur pour laisser de l'espace pour l'image */
+            margin-left: 170px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .variable-container {
+            background-color: #F8F9FA;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #E9ECEF;
+        }
+        .result-container {
+            background-color: #E9ECEF;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid #4CAF50;
+        }
+        h1 {
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h3 {
+            color: #34495E;
+            margin-top: 20px;
         }
         </style>
         """,
@@ -50,7 +78,7 @@ def main():
 
     # Ajouter une photo réduite à gauche
     try:
-        image_path = 'images/kidney.jpg'  # Assurez-vous que le chemin et l'extension sont corrects
+        image_path = 'images/kidney.jpg'
         image = Image.open(image_path)
         st.image(image, use_column_width=True, caption='Save your Kidney (by DE-2024)')
     except FileNotFoundError:
@@ -62,10 +90,22 @@ def main():
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
     
     # Formulaire pour entrer les données du patient avec des boutons radio
-    sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
-    anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
-    donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
-    age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
+    with st.container():
+        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
+        sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
+        anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
+        donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="variable-container">', unsafe_allow_html=True)
+        age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
@@ -89,6 +129,7 @@ def main():
     new_patient_pred_proba = clf_isotonic.predict_proba(new_patient_scaled)[:, 1]
 
     # Afficher le résultat de la prédiction
+    st.markdown('<div class="result-container">', unsafe_allow_html=True)
     st.subheader("Résultat de la prédiction")
     probability = new_patient_pred_proba[0]
     st.write(f"Probabilité de complications hémorragiques : {probability:.4f}")
@@ -99,6 +140,7 @@ def main():
     pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
 
     st.write(f"Classe prédite avec un cutoff de {cutoff} : {pred_class}")
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Afficher un tachymètre avec Plotly
     fig = go.Figure(go.Indicator(
@@ -107,7 +149,7 @@ def main():
         gauge={
             'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
-            'bgcolor': "white",  # Arrière-plan du tachymètre
+            'bgcolor': "white",
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
@@ -120,7 +162,7 @@ def main():
     ))
 
     fig.update_layout(
-        paper_bgcolor="white",  # Fond du graphique
+        paper_bgcolor="white",
         font={'color': "darkblue", 'family': "Arial"}
     )
 
