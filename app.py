@@ -65,7 +65,7 @@ def main():
     sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
     anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
     donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
-    age = st.number_input("Âge", min_value=0, max_value=100, value=30, step=1)
+    age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
 
     # Convertir les données d'entrée
     sexe = 1 if sexe == "Masculin" else 0
@@ -115,11 +115,7 @@ def main():
                 {'range': [0.1666, 0.3333], 'color': 'lightgreen'},
                 {'range': [0.3333, 0.55], 'color': 'orange'},
                 {'range': [0.55, 1], 'color': 'red'}
-            ],
-            'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'value': cutoff
-            }
+            ]
         }
     ))
 
