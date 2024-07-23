@@ -51,7 +51,7 @@ def main():
     )
 
     # Titre de l'application (centré)
-    st.markdown("<h1 style='text-align: center;'>Prédiction du risque d'hémorragie post-transplantation rénale</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Hemorrhage risk prediction in pediatric kidney transplant recipient</h1>", unsafe_allow_html=True)
 
     # Ajouter l'image sous le titre (centrée)
     try:
@@ -133,9 +133,9 @@ def main():
     st.plotly_chart(fig)
     # Ajouter le disclaimer en bas de la page
     st.markdown("""
-    <div style='font-size: 10px; color: gray; text-align: center; margin-top: 50px;'>
+    <div style='font-size: 12px; color: gray; text-align: center; margin-top: 50px;'>
     <hr>
-    Disclaimer: This ML algorithm was developed using data from 275 transplant patients. 
+    Disclaimer: This ML algorithm was developed using data from 275 kidney transplant patients. 
     It was trained using a VotingClassifier including Logistic Regression, Linear Discriminant Analysis, and Bagging, 
     fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
     </div>
