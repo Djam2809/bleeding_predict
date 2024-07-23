@@ -17,7 +17,7 @@ def main():
         """
         <style>
         .main {
-            background-color: #f0f0f5;
+            background-color: #FFFFFF;
         }
         .stButton>button {
             color: white;
