@@ -33,15 +33,6 @@ def main():
             font-size: 16px;
             font-weight: bold;
         }
-        .title-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .title-container img {
-            width: 200px;
-            margin-right: 20px;
-        }
         .variables-container {
             background-color: #f0f0f0;
             padding: 15px;
@@ -53,21 +44,18 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Titre de l'application avec image
+    # Titre de l'application
+    st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
+
+    # Ajouter l'image sous le titre
     try:
         image_path = 'images/kidney.jpg'
         image = Image.open(image_path)
-        col1, col2 = st.columns([1, 3])
-        with col1:
-            st.image(image, width=200)
-        with col2:
-            st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
+        st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
     except FileNotFoundError:
         st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
-        st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
     except Exception as e:
         st.error(f"Erreur lors du chargement de l'image : {e}")
-        st.title("Prédiction du risque d'hémorragie post-transplantation rénale")
 
     # Formulaire pour entrer les données du patient avec des boutons radio
     st.markdown('<div class="variables-container">', unsafe_allow_html=True)
