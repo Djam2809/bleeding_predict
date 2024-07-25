@@ -6,8 +6,5 @@ plotly
 pillow --only-binary=:all:
 matplotlib --only-binary=:all:
 scikit-learn
-PyMySQL
-fpdf
-base64
-kaleido
+PyMySQLgit 
 
