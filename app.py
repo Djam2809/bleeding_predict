@@ -8,13 +8,13 @@ import os
 
 def get_smiley(probability):
     if probability <= 0.1666:
-        return "😄","green"   # Très heureux
+        return "😄", "green"   # Très heureux
     elif probability <= 0.3333:
-        return "🙂","lightgreen"  # Heureux
+        return "🙂", "lightgreen"  # Heureux
     elif probability <= 0.55:
         return "😐", "orange" # Neutre
     else:
-        return "😟","red"  # Inquiet
+        return "😟", "red"  # Inquiet
 
 def main():
     # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
@@ -107,7 +107,7 @@ def main():
     # Afficher le résultat de la prédiction
     st.subheader("Résultat de la prédiction")
     probability = new_patient_pred_proba[0]
-    smiley = get_smiley(probability)
+    smiley, color = get_smiley(probability)
     st.markdown(f"Probabilité de complications hémorragiques : {probability:.4f} <span style='color:{color}; font-size:36px;'>{smiley}</span>", unsafe_allow_html=True)
 
     # Utiliser le cutoff de 0.55 pour la prédiction
@@ -121,7 +121,7 @@ def main():
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=probability,
-        title={'text': f"Risque de complications {smiley}", 'font': {'size': 48}},
+        title={'text': "Risque de complications", 'font': {'size': 28}},
         gauge={
             'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
@@ -138,11 +138,15 @@ def main():
     ))
 
     fig.update_layout(
+        title_text=f"Risque de complications <span style='color:{color}; font-size:48px;'>{smiley}</span>",
+        title_x=0.5,
+        height=500,  # Augmenter la hauteur du graphique
+        width=600,   # Augmenter la largeur du graphique
         paper_bgcolor="white",
         font={'color': "darkblue", 'family': "Arial"}
     )
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
     # Ajouter le disclaimer en bas de la page
     st.markdown("""
