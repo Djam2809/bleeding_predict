@@ -8,13 +8,13 @@ import os
 
 def get_smiley(probability):
     if probability <= 0.1666:
-        return "😄"  # Très heureux
+        return "😄","green"   # Très heureux
     elif probability <= 0.3333:
-        return "🙂"  # Heureux
+        return "🙂","lightgreen"  # Heureux
     elif probability <= 0.55:
-        return "😐"  # Neutre
+        return "😐", "orange" # Neutre
     else:
-        return "😟"  # Inquiet
+        return "😟","red"  # Inquiet
 
 def main():
     # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
@@ -108,7 +108,7 @@ def main():
     st.subheader("Résultat de la prédiction")
     probability = new_patient_pred_proba[0]
     smiley = get_smiley(probability)
-    st.write(f"Probabilité de complications hémorragiques : {probability:.4f} {smiley}")
+    st.markdown(f"Probabilité de complications hémorragiques : {probability:.4f} <span style='color:{color}; font-size:36px;'>{smiley}</span>", unsafe_allow_html=True)
 
     # Utiliser le cutoff de 0.55 pour la prédiction
     cutoff = 0.55
@@ -121,7 +121,7 @@ def main():
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=probability,
-        title={'text': f"Risque de complications {smiley}", 'font': {'size': 24}},
+        title={'text': f"Risque de complications {smiley}", 'font': {'size': 48}},
         gauge={
             'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
