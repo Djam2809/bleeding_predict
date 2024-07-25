@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import joblib
 import plotly.graph_objects as go
 from PIL import Image
+import os
 
 def get_smiley(probability):
     if probability <= 0.1666:
@@ -52,9 +54,6 @@ def main():
             justify-content: center;
             align-items: center;
             flex-direction: column;
-        }
-        .smiley {
-            font-size: 50px;
         }
         </style>
         """,
@@ -109,7 +108,7 @@ def main():
     st.subheader("Résultat de la prédiction")
     probability = new_patient_pred_proba[0]
     smiley, color = get_smiley(probability)
-    st.markdown(f"<div>Probabilité de complications hémorragiques : {probability*100:.1f}% <span style='color: {color};'>{smiley}</span></div>", unsafe_allow_html=True)
+    st.markdown(f"Probabilité de complications hémorragiques : {probability*100:.1f}% {smiley}", unsafe_allow_html=True)
 
     # Utiliser le cutoff de 0.55 pour la prédiction
     cutoff = 0.55
@@ -132,7 +131,7 @@ def main():
             'bordercolor': "gray",
             'steps': [
                 {'range': [0, 16.66], 'color': 'green'},
-                {'range': [16.66, 33.33], 'color': 'lightgreen'},
+                {'range': [16.66, 33.33], 'color': 'yellow'},
                 {'range': [33.33, 55], 'color': 'orange'},
                 {'range': [55, 100], 'color': 'red'}
             ]
@@ -140,6 +139,10 @@ def main():
     ))
 
     fig.update_layout(
+        title_text=f"Risque de complications <span style='font-size:48px;'>{smiley}</span>",
+        title_x=0.5,
+        height=500,
+        width=600,
         paper_bgcolor="white",
         font={'color': "darkblue", 'family': "Arial"}
     )
