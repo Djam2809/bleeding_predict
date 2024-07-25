@@ -3,7 +3,7 @@ pandas
 numpy
 joblib
 plotly
-pillow 
-matplotlib 
+pillow --only-binary=:all:
+matplotlib --only-binary=:all:
 scikit-learn
 PyMySQLgit 
