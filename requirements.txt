@@ -6,5 +6,11 @@ plotly
 pillow --only-binary=:all:
 matplotlib --only-binary=:all:
 scikit-learn
+<<<<<<< HEAD
 PyMySQLgit 
+=======
+PyMySQL
+
+
+>>>>>>> 834b82b0a8f44a4d1a024fd92ab337e9a7b33f46
 

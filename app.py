@@ -8,13 +8,13 @@ import os
 
 def get_smiley(probability):
     if probability <= 0.1666:
-        return "😄", "green"   # Très heureux
+        return "🟢", "green"   # Vert
     elif probability <= 0.3333:
-        return "🙂", "lightgreen"  # Heureux
+        return "🟡", "yellow"  # Jaune
     elif probability <= 0.55:
-        return "😐", "orange" # Neutre
+        return "🟠", "orange"  # Orange
     else:
-        return "😟", "red"  # Inquiet
+        return "🔴", "red"     # Rouge
 
 def main():
     # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
@@ -108,40 +108,41 @@ def main():
     st.subheader("Résultat de la prédiction")
     probability = new_patient_pred_proba[0]
     smiley, color = get_smiley(probability)
-    st.markdown(f"Probabilité de complications hémorragiques : {probability:.4f} <span style='color:{color}; font-size:36px;'>{smiley}</span>", unsafe_allow_html=True)
+    st.markdown(f"Probabilité de complications hémorragiques : {probability*100:.1f}% {smiley}", unsafe_allow_html=True)
 
     # Utiliser le cutoff de 0.55 pour la prédiction
     cutoff = 0.55
     new_patient_pred = (new_patient_pred_proba >= cutoff).astype(int)
     pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
 
-    st.write(f"Classe prédite avec un cutoff de {cutoff} : {pred_class}")
+    st.write(f"Classe prédite avec un cutoff de {cutoff*100:.1f}% : {pred_class}")
 
     # Afficher un tachymètre avec Plotly
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
-        value=probability,
+        value=probability * 100,  # Convertir en pourcentage
+        number={'suffix': "%", 'valueformat': '.1f'},  # Ajouter le suffixe % et limiter à 1 décimale
         title={'text': "Risque de complications", 'font': {'size': 28}},
         gauge={
-            'axis': {'range': [0, 1], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},  # Changer la plage à 0-100
             'bar': {'color': "darkblue"},
             'bgcolor': "white",
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 0.1666], 'color': 'green'},
-                {'range': [0.1666, 0.3333], 'color': 'lightgreen'},
-                {'range': [0.3333, 0.55], 'color': 'orange'},
-                {'range': [0.55, 1], 'color': 'red'}
+                {'range': [0, 16.66], 'color': 'green'},
+                {'range': [16.66, 33.33], 'color': 'yellow'},
+                {'range': [33.33, 55], 'color': 'orange'},
+                {'range': [55, 100], 'color': 'red'}
             ]
         }
     ))
 
     fig.update_layout(
-        title_text=f"Risque de complications <span style='color:{color}; font-size:48px;'>{smiley}</span>",
+        title_text=f"Risque de complications <span style='font-size:48px;'>{smiley}</span>",
         title_x=0.5,
-        height=500,  # Augmenter la hauteur du graphique
-        width=600,   # Augmenter la largeur du graphique
+        height=500,
+        width=600,
         paper_bgcolor="white",
         font={'color': "darkblue", 'family': "Arial"}
     )
