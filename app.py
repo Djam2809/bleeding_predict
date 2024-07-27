@@ -69,9 +69,9 @@ def login():
     # Colonne de gauche pour le formulaire de connexion
     st.markdown('<div class="login-form">', unsafe_allow_html=True)
     st.subheader("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type='password')
-    if st.button("Login"):
+    username = st.text_input("Username", key="username_input")
+    password = st.text_input("Password", type='password', key="password_input")
+    if st.button("Login", key="login_button"):
         if username in users:
             hashed_pswd = users[username]
             if check_hashes(password, hashed_pswd):
@@ -118,16 +118,6 @@ def main():
     # Vérifier si l'utilisateur est connecté
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
-
-    if not st.session_state.logged_in:
-        login()
-    else:
-        # Ajouter le bouton de déconnexion en haut de la page
-        if st.button("Déconnexion"):
-            st.session_state.logged_in = False
-            st.session_state.username = None
-            st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
-            st.stop()
 
     if not st.session_state.logged_in:
         login()
@@ -273,6 +263,13 @@ def main():
         fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
         </div>
         """, unsafe_allow_html=True)
+
+        # Ajouter le bouton de déconnexion en bas de la page
+        if st.button("Déconnexion", key="logout_button"):
+            st.session_state.logged_in = False
+            st.session_state.username = None
+            st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
+            st.experimental_rerun()
 
 if __name__ == "__main__":
     main()
