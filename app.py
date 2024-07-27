@@ -128,7 +128,7 @@ def main():
             st.session_state.username = None
             st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
             st.stop()
-            
+
     if not st.session_state.logged_in:
         login()
     else:
@@ -273,12 +273,6 @@ def main():
         fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
         </div>
         """, unsafe_allow_html=True)
-
-        # Ajouter un bouton de déconnexion
-        if st.button("Déconnexion"):
-            st.session_state.logged_in = False
-            st.session_state.username = None
-            st.experimental_rerun()
 
 if __name__ == "__main__":
     main()
