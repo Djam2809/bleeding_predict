@@ -23,88 +23,6 @@ users = {
     "user2": make_hashes("password2")
 }
 
-# Fonction de connexion
-def login():
-    st.markdown("""
-    <style>
-    .login-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        background-color: #f0f8ff;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .login-form {
-        flex: 1;
-        padding: 20px;
-    }
-    .login-image {
-        flex: 1;
-        text-align: center;
-    }
-    .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 24px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .stButton>button:hover {
-        background-color: #45a049;
-    }
-    .contact-info {
-        margin-top: 20px;
-        font-size: 14px;
-        color: #555;
-        text-align: center;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown('<div class="login-container">', unsafe_allow_html=True)
-    
-    # Colonne de gauche pour le formulaire de connexion
-    st.markdown('<div class="login-form">', unsafe_allow_html=True)
-    st.subheader("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type='password')
-    if st.button("Login"):
-        if username in users:
-            hashed_pswd = users[username]
-            if check_hashes(password, hashed_pswd):
-                st.success(f"Logged in as {username}")
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                # Pas besoin de st.experimental_rerun()
-            else:
-                st.warning("Incorrect username/password")
-        else:
-            st.warning("User not recognized")
-    
-    st.markdown("""
-    <div class="contact-info">
-    To get your access, please contact Djamel ELARIBI at<br>djamel_elaribi@hotmail.fr
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Colonne de droite pour l'image
-    st.markdown('<div class="login-image">', unsafe_allow_html=True)
-    try:
-        image_path = 'images/kidney.jpg'
-        image = Image.open(image_path)
-        st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
-    except FileNotFoundError:
-        st.error(f"The image file '{image_path}' is not found in the 'images' directory.")
-    except Exception as e:
-        st.error(f"Error loading the image: {e}")
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
 def get_smiley(probability):
     if probability <= 0.1666:
         return "😄", "green"   # Très heureux
@@ -116,23 +34,136 @@ def get_smiley(probability):
         return "😟", "red"  # Inquiet
 
 def main():
+    # Définir le style CSS pour l'application
+    st.markdown(
+        """
+        <style>
+        .main {
+            background-color: #FFFFFF;
+        }
+        .stButton>button {
+            color: white;
+            background: #4CAF50;
+            border-radius: 5px;
+            padding: 8px 16px;
+            border: none;
+        }
+        .stButton>button:hover {
+            background: #45a049;
+        }
+        .stRadio>label, .stNumberInput>label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .variables-container {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .login-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .login-form {
+            flex: 1;
+            padding: 20px;
+        }
+        .login-image {
+            flex: 1;
+            text-align: center;
+        }
+        .contact-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Titre de l'application (centré)
+    st.markdown("<h1 style='text-align: center;'>Hemorrhage risk prediction in pediatric kidney transplant recipient</h1>", unsafe_allow_html=True)
+
+    # Ajouter l'image sous le titre (centrée)
+    try:
+        image_path = 'images/kidney.jpg'
+        image = Image.open(image_path)
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            st.image(image, width=200, caption='Save your Kidney (by DE-2024)', use_column_width=True)
+    except FileNotFoundError:
+        st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'image : {e}")
+
     # Vérifier si l'utilisateur est connecté
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
 
-    if not st.session_state.logged_in:
-        login()
-    else:
+    def login():
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
+        
+        # Colonne de gauche pour le formulaire de connexion
+        st.markdown('<div class="login-form">', unsafe_allow_html=True)
+        st.subheader("Login")
+        username = st.text_input("Username", key="login_username")
+        password = st.text_input("Password", type='password', key="login_password")
+        if st.button("Login", key="login_button"):
+            if username in users:
+                hashed_pswd = users[username]
+                if check_hashes(password, hashed_pswd):
+                    st.success(f"Logged in as {username}")
+                    st.session_state.logged_in = True
+                    st.session_state.username = username
+                    st.experimental_rerun()
+                else:
+                    st.warning("Incorrect username/password")
+            else:
+                st.warning("User not recognized")
+        
+        st.markdown("""
+        <div class="contact-info">
+        To get your access, please contact Djamel ELARIBI at<br>djamel_elaribi@hotmail.fr
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Colonne de droite pour l'image
+        st.markdown('<div class="login-image">', unsafe_allow_html=True)
+        try:
+            image_path = 'images/kidney.jpg'
+            image = Image.open(image_path)
+            st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
+        except FileNotFoundError:
+            st.error(f"The image file '{image_path}' is not found in the 'images' directory.")
+        except Exception as e:
+            st.error(f"Error loading the image: {e}")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    def show_prediction():
         # Ajouter le bouton de déconnexion en haut de la page
-        if st.button("Déconnexion"):
+        if st.button("Déconnexion", key="logout_button"):
             st.session_state.logged_in = False
             st.session_state.username = None
             st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
-            st.stop()
+            st.experimental_rerun()
 
-    if not st.session_state.logged_in:
-        login()
-    else:
         # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
         try:
             clf_isotonic = joblib.load('clf_isotonic.pkl')
@@ -141,59 +172,6 @@ def main():
         except Exception as e:
             st.error(f"Error loading model or preprocessing objects: {e}")
             st.stop()
-
-        # Définir le style CSS pour l'application
-        st.markdown(
-            """
-            <style>
-            .main {
-                background-color: #FFFFFF;
-            }
-            .stButton>button {
-                color: white;
-                background: #4CAF50;
-                border-radius: 5px;
-                padding: 8px 16px;
-                border: none;
-            }
-            .stButton>button:hover {
-                background: #45a049;
-            }
-            .stRadio>label, .stNumberInput>label {
-                font-size: 16px;
-                font-weight: bold;
-            }
-            .variables-container {
-                background-color: #f0f0f0;
-                padding: 15px;
-                border-radius: 5px;
-                margin-bottom: 20px;
-            }
-            .centered {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-
-        # Titre de l'application (centré)
-        st.markdown("<h1 style='text-align: center;'>Hemorrhage risk prediction in pediatric kidney transplant recipient</h1>", unsafe_allow_html=True)
-
-        # Ajouter l'image sous le titre (centrée)
-        try:
-            image_path = 'images/kidney.jpg'
-            image = Image.open(image_path)
-            col1, col2, col3 = st.columns([1,2,1])
-            with col2:
-                st.image(image, width=200, caption='Save your Kidney (by DE-2024)', use_column_width=True)
-        except FileNotFoundError:
-            st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
-        except Exception as e:
-            st.error(f"Erreur lors du chargement de l'image : {e}")
 
         # Formulaire pour entrer les données du patient avec des boutons radio
         st.markdown('<div class="variables-container">', unsafe_allow_html=True)
@@ -240,11 +218,11 @@ def main():
         # Afficher un tachymètre avec Plotly
         fig = go.Figure(go.Indicator(
             mode="gauge+number",
-            value=probability * 100,  # Convertir en pourcentage
-            number={'suffix': "%", 'valueformat': '.1f'},  # Ajouter le suffixe % et limiter à 1 décimale
+            value=probability * 100,
+            number={'suffix': "%", 'valueformat': '.1f'},
             title={'text': "Risque de complications", 'font': {'size': 28}},
             gauge={
-                'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},  # Changer la plage à 0-100
+                'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
                 'bar': {'color': "darkblue"},
                 'bgcolor': "white",
                 'borderwidth': 2,
@@ -278,6 +256,11 @@ def main():
         fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
         </div>
         """, unsafe_allow_html=True)
+
+    if not st.session_state.logged_in:
+        login()
+    else:
+        show_prediction()
 
 if __name__ == "__main__":
     main()
