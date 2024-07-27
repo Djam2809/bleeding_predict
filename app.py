@@ -110,7 +110,7 @@ def main():
     except Exception as e:
         st.error(f"Erreur lors du chargement de l'image : {e}")
 
-    # Vérifier si l'utilisateur est connecté
+    # Initialiser l'état de connexion
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
 
@@ -129,7 +129,7 @@ def main():
                     st.success(f"Logged in as {username}")
                     st.session_state.logged_in = True
                     st.session_state.username = username
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.warning("Incorrect username/password")
             else:
@@ -162,7 +162,7 @@ def main():
             st.session_state.logged_in = False
             st.session_state.username = None
             st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
-            st.experimental_rerun()
+            st.rerun()
 
         # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
         try:
@@ -171,7 +171,7 @@ def main():
             scaler = joblib.load('scaler.pkl')
         except Exception as e:
             st.error(f"Error loading model or preprocessing objects: {e}")
-            st.stop()
+            return
 
         # Formulaire pour entrer les données du patient avec des boutons radio
         st.markdown('<div class="variables-container">', unsafe_allow_html=True)
