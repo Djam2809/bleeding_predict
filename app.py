@@ -39,6 +39,13 @@ def login():
                 st.warning("Nom d'utilisateur/Mot de passe incorrect")
         else:
             st.warning("Utilisateur non reconnu")
+    
+    # Ajout du message pour contacter Djamel ELARIBI
+    st.markdown("""
+    <div style='font-size: 14px; color: #555; text-align: center; margin-top: 30px;'>
+    To get your access, please contact Djamel ELARIBI at djamel_elaribi@hotmail.fr
+    </div>
+    """, unsafe_allow_html=True)
 
 def get_smiley(probability):
     if probability <= 0.1666:
