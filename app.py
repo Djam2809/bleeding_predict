@@ -25,27 +25,84 @@ users = {
 
 # Fonction de connexion
 def login():
-    st.subheader("Connexion")
-    username = st.text_input("Nom d'utilisateur")
-    password = st.text_input("Mot de passe", type='password')
-    if st.button("Se connecter"):
+    st.markdown("""
+    <style>
+    .login-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background-color: #f0f8ff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .login-form {
+        flex: 1;
+        padding: 20px;
+    }
+    .login-image {
+        flex: 1;
+        text-align: center;
+    }
+    .stButton>button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+    }
+    .contact-info {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #555;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    
+    # Colonne de gauche pour le formulaire de connexion
+    st.markdown('<div class="login-form">', unsafe_allow_html=True)
+    st.subheader("Login")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type='password')
+    if st.button("Login"):
         if username in users:
             hashed_pswd = users[username]
             if check_hashes(password, hashed_pswd):
-                st.success(f"Connecté en tant que {username}")
+                st.success(f"Logged in as {username}")
                 st.session_state.logged_in = True
                 st.session_state.username = username
             else:
-                st.warning("Nom d'utilisateur/Mot de passe incorrect")
+                st.warning("Incorrect username/password")
         else:
-            st.warning("Utilisateur non reconnu")
+            st.warning("User not recognized")
     
-    # Ajout du message pour contacter Djamel ELARIBI
     st.markdown("""
-    <div style='font-size: 14px; color: #555; text-align: center; margin-top: 30px;'>
-    To get your access, please contact Djamel ELARIBI at djamel_elaribi@hotmail.fr
+    <div class="contact-info">
+    To get your access, please contact Djamel ELARIBI at<br>djamel_elaribi@hotmail.fr
     </div>
     """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Colonne de droite pour l'image
+    st.markdown('<div class="login-image">', unsafe_allow_html=True)
+    try:
+        image_path = 'images/kidney.jpg'
+        image = Image.open(image_path)
+        st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
+    except FileNotFoundError:
+        st.error(f"The image file '{image_path}' is not found in the 'images' directory.")
+    except Exception as e:
+        st.error(f"Error loading the image: {e}")
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def get_smiley(probability):
     if probability <= 0.1666:
