@@ -122,6 +122,16 @@ def main():
     if not st.session_state.logged_in:
         login()
     else:
+        # Ajouter le bouton de déconnexion en haut de la page
+        if st.button("Déconnexion"):
+            st.session_state.logged_in = False
+            st.session_state.username = None
+            st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
+            st.stop()
+            
+    if not st.session_state.logged_in:
+        login()
+    else:
         # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
         clf_isotonic = joblib.load('clf_isotonic.pkl')
         imputer = joblib.load('imputer.pkl')
