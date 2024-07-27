@@ -69,16 +69,16 @@ def login():
     # Colonne de gauche pour le formulaire de connexion
     st.markdown('<div class="login-form">', unsafe_allow_html=True)
     st.subheader("Login")
-    username = st.text_input("Username", key="username_input")
-    password = st.text_input("Password", type='password', key="password_input")
-    if st.button("Login", key="login_button"):
+    username = st.text_input("Username")
+    password = st.text_input("Password", type='password')
+    if st.button("Login"):
         if username in users:
             hashed_pswd = users[username]
             if check_hashes(password, hashed_pswd):
                 st.success(f"Logged in as {username}")
                 st.session_state.logged_in = True
                 st.session_state.username = username
-                st.experimental_rerun()  # Recharger la page immédiatement
+                # Pas besoin de st.experimental_rerun()
             else:
                 st.warning("Incorrect username/password")
         else:
@@ -120,160 +120,164 @@ def main():
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
 
-    # Si l'utilisateur n'est pas connecté, afficher la page de connexion
     if not st.session_state.logged_in:
         login()
-        return  # Arrêter l'exécution ici si l'utilisateur n'est pas connecté
+    else:
+        # Ajouter le bouton de déconnexion en haut de la page
+        if st.button("Déconnexion"):
+            st.session_state.logged_in = False
+            st.session_state.username = None
+            st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
+            st.stop()
 
-    # Le reste du code pour l'utilisateur connecté
-    # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
-    clf_isotonic = joblib.load('clf_isotonic.pkl')
-    imputer = joblib.load('imputer.pkl')
-    scaler = joblib.load('scaler.pkl')
+    if not st.session_state.logged_in:
+        login()
+    else:
+        # Charger le modèle calibré et les objets nécessaires (imputer et scaler)
+        try:
+            clf_isotonic = joblib.load('clf_isotonic.pkl')
+            imputer = joblib.load('imputer.pkl')
+            scaler = joblib.load('scaler.pkl')
+        except Exception as e:
+            st.error(f"Error loading model or preprocessing objects: {e}")
+            st.stop()
 
-    # Définir le style CSS pour l'application
-    st.markdown(
-        """
-        <style>
-        .main {
-            background-color: #FFFFFF;
+        # Définir le style CSS pour l'application
+        st.markdown(
+            """
+            <style>
+            .main {
+                background-color: #FFFFFF;
+            }
+            .stButton>button {
+                color: white;
+                background: #4CAF50;
+                border-radius: 5px;
+                padding: 8px 16px;
+                border: none;
+            }
+            .stButton>button:hover {
+                background: #45a049;
+            }
+            .stRadio>label, .stNumberInput>label {
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .variables-container {
+                background-color: #f0f0f0;
+                padding: 15px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+            }
+            .centered {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Titre de l'application (centré)
+        st.markdown("<h1 style='text-align: center;'>Hemorrhage risk prediction in pediatric kidney transplant recipient</h1>", unsafe_allow_html=True)
+
+        # Ajouter l'image sous le titre (centrée)
+        try:
+            image_path = 'images/kidney.jpg'
+            image = Image.open(image_path)
+            col1, col2, col3 = st.columns([1,2,1])
+            with col2:
+                st.image(image, width=200, caption='Save your Kidney (by DE-2024)', use_column_width=True)
+        except FileNotFoundError:
+            st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
+        except Exception as e:
+            st.error(f"Erreur lors du chargement de l'image : {e}")
+
+        # Formulaire pour entrer les données du patient avec des boutons radio
+        st.markdown('<div class="variables-container">', unsafe_allow_html=True)
+        sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
+        anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
+        donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
+        age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Convertir les données d'entrée
+        sexe = 1 if sexe == "Masculin" else 0
+        anticoag = 1 if anticoag == "Oui" else 0
+        donneur = 1 if donneur == "Vivant" else 0
+
+        # Créer un DataFrame pour les nouvelles données du patient
+        new_patient_data = {
+            'sexe': [sexe],
+            'anticoag': [anticoag],
+            'donneur': [donneur],
+            'age': [age]
         }
-        .stButton>button {
-            color: white;
-            background: #4CAF50;
-            border-radius: 5px;
-            padding: 8px 16px;
-            border: none;
-        }
-        .stButton>button:hover {
-            background: #45a049;
-        }
-        .stRadio>label, .stNumberInput>label {
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .variables-container {
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .centered {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+        new_patient_df = pd.DataFrame(new_patient_data)
 
-    # Titre de l'application (centré)
-    st.markdown("<h1 style='text-align: center;'>Hemorrhage risk prediction in pediatric kidney transplant recipient</h1>", unsafe_allow_html=True)
+        # Imputer les éventuelles valeurs manquantes et standardiser les données
+        new_patient_imputed = imputer.transform(new_patient_df)
+        new_patient_scaled = scaler.transform(new_patient_imputed)
 
-    # Ajouter l'image sous le titre (centrée)
-    try:
-        image_path = 'images/kidney.jpg'
-        image = Image.open(image_path)
-        col1, col2, col3 = st.columns([1,2,1])
-        with col2:
-            st.image(image, width=200, caption='Save your Kidney (by DE-2024)', use_column_width=True)
-    except FileNotFoundError:
-        st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
-    except Exception as e:
-        st.error(f"Erreur lors du chargement de l'image : {e}")
+        # Prédire avec le modèle calibré
+        new_patient_pred_proba = clf_isotonic.predict_proba(new_patient_scaled)[:, 1]
 
-    # Formulaire pour entrer les données du patient avec des boutons radio
-    st.markdown('<div class="variables-container">', unsafe_allow_html=True)
-    sexe = st.radio("Sexe", options=["Masculin", "Féminin"], index=0, format_func=lambda x: x.capitalize())
-    anticoag = st.radio("Anticoagulation", options=["Non", "Oui"], index=0, format_func=lambda x: x.capitalize())
-    donneur = st.radio("Type de donneur", options=["Décédé", "Vivant"], index=0, format_func=lambda x: x.capitalize())
-    age = st.number_input("Âge", min_value=0, max_value=100, value=17, step=1)
-    st.markdown('</div>', unsafe_allow_html=True)
+        # Afficher le résultat de la prédiction
+        st.subheader("Résultat de la prédiction")
+        probability = new_patient_pred_proba[0]
+        smiley, color = get_smiley(probability)
+        st.markdown(f"Probabilité de complications hémorragiques : {probability*100:.1f}% {smiley}", unsafe_allow_html=True)
 
-    # Convertir les données d'entrée
-    sexe = 1 if sexe == "Masculin" else 0
-    anticoag = 1 if anticoag == "Oui" else 0
-    donneur = 1 if donneur == "Vivant" else 0
+        # Utiliser le cutoff de 0.55 pour la prédiction
+        cutoff = 0.55
+        new_patient_pred = (new_patient_pred_proba >= cutoff).astype(int)
+        pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
 
-    # Créer un DataFrame pour les nouvelles données du patient
-    new_patient_data = {
-        'sexe': [sexe],
-        'anticoag': [anticoag],
-        'donneur': [donneur],
-        'age': [age]
-    }
-    new_patient_df = pd.DataFrame(new_patient_data)
+        st.write(f"Classe prédite avec un cutoff de {cutoff*100:.1f}% : {pred_class}")
 
-    # Imputer les éventuelles valeurs manquantes et standardiser les données
-    new_patient_imputed = imputer.transform(new_patient_df)
-    new_patient_scaled = scaler.transform(new_patient_imputed)
+        # Afficher un tachymètre avec Plotly
+        fig = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=probability * 100,  # Convertir en pourcentage
+            number={'suffix': "%", 'valueformat': '.1f'},  # Ajouter le suffixe % et limiter à 1 décimale
+            title={'text': "Risque de complications", 'font': {'size': 28}},
+            gauge={
+                'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},  # Changer la plage à 0-100
+                'bar': {'color': "darkblue"},
+                'bgcolor': "white",
+                'borderwidth': 2,
+                'bordercolor': "gray",
+                'steps': [
+                    {'range': [0, 16.66], 'color': 'green'},
+                    {'range': [16.66, 33.33], 'color': 'yellow'},
+                    {'range': [33.33, 55], 'color': 'orange'},
+                    {'range': [55, 100], 'color': 'red'}
+                ]
+            }
+        ))
 
-    # Prédire avec le modèle calibré
-    new_patient_pred_proba = clf_isotonic.predict_proba(new_patient_scaled)[:, 1]
+        fig.update_layout(
+            title_text=f"Risque de complications <span style='font-size:48px;'>{smiley}</span>",
+            title_x=0.5,
+            height=500,
+            width=600,
+            paper_bgcolor="white",
+            font={'color': "darkblue", 'family': "Arial"}
+        )
 
-    # Afficher le résultat de la prédiction
-    st.subheader("Résultat de la prédiction")
-    probability = new_patient_pred_proba[0]
-    smiley, color = get_smiley(probability)
-    st.markdown(f"Probabilité de complications hémorragiques : {probability*100:.1f}% {smiley}", unsafe_allow_html=True)
+        st.plotly_chart(fig, use_container_width=True)
 
-    # Utiliser le cutoff de 0.55 pour la prédiction
-    cutoff = 0.55
-    new_patient_pred = (new_patient_pred_proba >= cutoff).astype(int)
-    pred_class = "Risque" if new_patient_pred[0] == 1 else "Pas de risque"
-
-    st.write(f"Classe prédite avec un cutoff de {cutoff*100:.1f}% : {pred_class}")
-
-    # Afficher un tachymètre avec Plotly
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=probability * 100,  # Convertir en pourcentage
-        number={'suffix': "%", 'valueformat': '.1f'},  # Ajouter le suffixe % et limiter à 1 décimale
-        title={'text': "Risque de complications", 'font': {'size': 28}},
-        gauge={
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},  # Changer la plage à 0-100
-            'bar': {'color': "darkblue"},
-            'bgcolor': "white",
-            'borderwidth': 2,
-            'bordercolor': "gray",
-            'steps': [
-                {'range': [0, 16.66], 'color': 'green'},
-                {'range': [16.66, 33.33], 'color': 'yellow'},
-                {'range': [33.33, 55], 'color': 'orange'},
-                {'range': [55, 100], 'color': 'red'}
-            ]
-        }
-    ))
-
-    fig.update_layout(
-        title_text=f"Risque de complications <span style='font-size:48px;'>{smiley}</span>",
-        title_x=0.5,
-        height=500,
-        width=600,
-        paper_bgcolor="white",
-        font={'color': "darkblue", 'family': "Arial"}
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-    # Ajouter le disclaimer en bas de la page
-    st.markdown("""
-    <div style='font-size: 12px; color: gray; text-align: center; margin-top: 50px;'>
-    <hr>
-    Disclaimer: This ML algorithm was developed using data from 175 kidney transplant patients. 
-    It was trained using a VotingClassifier including Logistic Regression, Linear Discriminant Analysis, and Bagging, 
-    fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Ajouter le bouton de déconnexion en bas de la page
-    if st.button("Déconnexion", key="logout_button"):
-        st.session_state.logged_in = False
-        st.session_state.username = None
-        st.success("Vous avez été déconnecté. Veuillez rafraîchir la page.")
-        st.experimental_rerun()
+        # Ajouter le disclaimer en bas de la page
+        st.markdown("""
+        <div style='font-size: 12px; color: gray; text-align: center; margin-top: 50px;'>
+        <hr>
+        Disclaimer: This ML algorithm was developed using data from 175 kidney transplant patients. 
+        It was trained using a VotingClassifier including Logistic Regression, Linear Discriminant Analysis, and Bagging, 
+        fine-tuned to obtain the best hyperparameters, and calibrated.(Djamel ELARIBI)
+        </div>
+        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
