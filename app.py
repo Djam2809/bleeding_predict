@@ -147,7 +147,7 @@ def main():
         try:
             image_path = 'images/kid.jpg'
             image = Image.open(image_path)
-            st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
+            st.image(image, width=600, caption='Save your Kidney (by DE-2024)')
         except FileNotFoundError:
             st.error(f"The image file '{image_path}' is not found in the 'images' directory.")
         except Exception as e:
