@@ -100,7 +100,7 @@ def main():
 
     # Ajouter l'image sous le titre (centrée)
     try:
-        image_path = 'images/kidney.jpg'
+        image_path = 'images/kid.jpg'
         image = Image.open(image_path)
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
@@ -145,7 +145,7 @@ def main():
         # Colonne de droite pour l'image
         st.markdown('<div class="login-image">', unsafe_allow_html=True)
         try:
-            image_path = 'images/kidney.jpg'
+            image_path = 'images/kid.jpg'
             image = Image.open(image_path)
             st.image(image, width=200, caption='Save your Kidney (by DE-2024)')
         except FileNotFoundError:
