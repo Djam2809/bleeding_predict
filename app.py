@@ -104,7 +104,7 @@ def main():
         image = Image.open(image_path)
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            st.image(image, width=200, caption='Save your Kidney (by DE-2024)', use_column_width=True)
+            st.image(image, width=300, caption='Save your Kidney (by DE-2024)', use_column_width=True)
     except FileNotFoundError:
         st.error(f"Le fichier image '{image_path}' est introuvable dans le répertoire 'images'.")
     except Exception as e:
